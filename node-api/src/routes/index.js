@@ -6,7 +6,7 @@ import word from '../controllers/word';
 const router = express();
 
 initializeDb(db => {
-  router.use('/word', word({ config, db }));
+  router.use('/dictionary', word({ config, db }));
 });
 
 export default router;
