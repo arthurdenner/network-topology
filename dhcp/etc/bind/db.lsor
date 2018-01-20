@@ -11,4 +11,4 @@ $TTL	604800
 ;
 @	IN	NS	lsor.int.
 @	IN	A	192.168.10.5
-www	IN	A	10.10.1.5
+www	IN	A	10.10.1.1

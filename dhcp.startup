@@ -1,0 +1,11 @@
+ifconfig eth0 192.168.10.5/24
+
+route add default gw 192.168.10.1
+
+echo "nameserver 192.168.10.1" > /etc/resolv.conf
+
+/etc/init.d/dhcp3-server start
+/etc/init.d/bind9 start
+
+
+

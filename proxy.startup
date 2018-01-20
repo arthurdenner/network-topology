@@ -1,0 +1,6 @@
+ifconfig eth0 10.10.1.10/24
+
+route add default gw 10.10.1.1
+
+/etc/init.d/squid start
+echo "nameserver 8.8.8.8" >> /etc/resolv.conf
