@@ -1,0 +1,26 @@
+ifconfig eth1 192.168.10.1/24
+ifconfig eth2 10.10.1.1/24
+
+route add default gw 192.168.100.1
+
+/etc/init.d/ssh start
+
+#NAT
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+iptables -t nat -A PREROUTING -p tcp -d 192.168.100.2 --dport 80 -j DNAT --to 10.10.1.5:80
+
+#Proxy
+iptables -t nat -A PREROUTING -p tcp -s 192.168.10.0/24 --dport 80 -j DNAT --to 10.10.1.10:3128
+
+#Facebook
+iptables -A INPUT -p tcp --dport 80 -d 157.240.12.35 -j DROP
+iptables -A INPUT -p tcp --dport 443 -d 157.240.12.35 -j DROP
+
+#Instagram
+iptables -A INPUT -p tcp --dport 80 -d 52.6.197.145 -j DROP
+iptables -A INPUT -p tcp --dport 443 -d 52.6.197.145 -j DROP
+
+#Twitter
+iptables -A INPUT -p tcp --dport 80 -d 104.244.42.193 -j DROP
+iptables -A INPUT -p tcp --dport 443 -d 104.244.42.193 -j DROP
