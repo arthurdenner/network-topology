@@ -85,17 +85,16 @@ class App extends Component {
       isSaving: true,
     });
 
-    console.log(values);
-
     if (!values._id) {
       await axios.post(`${API_URL}/add`, values);
     } else {
-      await axios.put(`${API_URL}/${values._id}`);
+      await axios.put(`${API_URL}/${values._id}`, values);
     }
 
     const words = await this.getWords();
 
     this.setState({
+      _id: null,
       description: '',
       isSaving: false,
       meaning: '',
