@@ -51,7 +51,7 @@
 }
 
 #description {
-  width: 33%;
+  width: 20%;
 }
 
 #meaning {
@@ -102,6 +102,7 @@
 }
 
 .no-results {
+  margin-top: 1em;
   text-align: center;
 }
 

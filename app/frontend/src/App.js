@@ -3,7 +3,9 @@ import { LoopingRhombusesSpinner } from 'react-epic-spinners';
 import axios from 'axios';
 import './App.css';
 
-const API_URL = 'http://165.227.178.221/api/dictionary';
+const api = axios.create({
+  baseURL: 'http://165.227.178.221/api/dictionary'
+})
 
 class App extends Component {
   state = {
@@ -20,14 +22,15 @@ class App extends Component {
   }
 
   getWords = async () => {
-    const { data: words } = await axios.get(API_URL);
+    const { data: words } = await api.get();
 
     this.setState({
+      _id: null,
+      description: '',
+      meaning: '',
       isFetching: false,
       words,
     });
-
-    return words;
   };
 
   handleChangeText = evt => {
@@ -77,7 +80,7 @@ class App extends Component {
 
   handleCloseError = () => {
     this.setState({
-      error: null,
+      error: false,
     });
   };
 
@@ -87,19 +90,15 @@ class App extends Component {
     });
 
     if (!values._id) {
-      await axios.post(`${API_URL}/add`, values);
+      await api.post('/add', values);
     } else {
-      await axios.put(`${API_URL}/${values._id}`, values);
+      await api.put(`/${values._id}`, values);
     }
 
-    const words = await this.getWords();
+    await this.getWords();
 
     this.setState({
-      _id: null,
-      description: '',
       isSaving: false,
-      meaning: '',
-      words,
     });
 
     this.input.focus();
@@ -108,13 +107,9 @@ class App extends Component {
   deleteWord = async evt => {
     const { id } = evt.target;
 
-    await axios.delete(`${API_URL}/${id}`);
+    await api.delete(`/${id}`);
 
-    const words = await this.getWords();
-
-    this.setState({
-      words,
-    });
+    await this.getWords();
   };
 
   render() {
@@ -135,76 +130,76 @@ class App extends Component {
             <LoopingRhombusesSpinner color="#2f80ed" />
           </div>
         ) : (
-          <Fragment>
-            <div className="form">
-              <input
-                ref={el => (this.input = el)}
-                className="field"
-                id="description"
-                onChange={this.handleChangeText}
-                placeholder="Escreva uma descrição"
-                value={description}
-              />
-              <input
-                className="field"
-                id="meaning"
-                onChange={this.handleChangeText}
-                placeholder="Escreva um significado"
-                value={meaning}
-              />
-              <button
-                className="button primary"
-                onClick={this.handleSaveButton}
-              >
-                {isSaving ? 'Salvando...' : 'Salvar'}
-              </button>
-              {_id && (
+            <Fragment>
+              <div className="form">
+                <input
+                  ref={el => (this.input = el)}
+                  className="field"
+                  id="description"
+                  onChange={this.handleChangeText}
+                  placeholder="Escreva uma descrição"
+                  value={description}
+                />
+                <input
+                  className="field"
+                  id="meaning"
+                  onChange={this.handleChangeText}
+                  placeholder="Escreva um significado"
+                  value={meaning}
+                />
                 <button
-                  className="button secondary"
-                  onClick={this.handleCancel}
+                  className="button primary"
+                  onClick={this.handleSaveButton}
                 >
-                  Cancelar
+                  {isSaving ? 'Salvando...' : 'Salvar'}
                 </button>
-              )}
-            </div>
-            {error && (
-              <div className="error">
-                Description and meaning are required!{' '}
-                <span onClick={this.handleCloseError}>✖</span>
+                {_id && (
+                  <button
+                    className="button secondary"
+                    onClick={this.handleCancel}
+                  >
+                    Cancelar
+                </button>
+                )}
               </div>
-            )}
-            <div>
-              {words.length > 0 ? (
-                words.map(w => (
-                  <div className="word" key={w._id}>
-                    <div className="word-header">
-                      <h1>{w.description}</h1>
-                      <div>
-                        <span
-                          id={w._id}
-                          onClick={this.handleEdit}
-                          className="option"
-                        >
-                          Editar
-                        </span>
-                        <span
-                          id={w._id}
-                          className="option"
-                          onClick={this.deleteWord}
-                        >
-                          Deletar
-                        </span>
-                      </div>
-                    </div>
-                    {w.meaning}
-                  </div>
-                ))
-              ) : (
-                <div className="no-results">Nenhuma palavra encontrada</div>
+              {error && (
+                <div className="error">
+                  Description and meaning are required!{' '}
+                  <span onClick={this.handleCloseError}>✖</span>
+                </div>
               )}
-            </div>
-          </Fragment>
-        )}
+              <div>
+                {words.length > 0 ? (
+                  words.map(w => (
+                    <div className="word" key={w._id}>
+                      <div className="word-header">
+                        <h1>{w.description}</h1>
+                        <div>
+                          <span
+                            id={w._id}
+                            onClick={this.handleEdit}
+                            className="option"
+                          >
+                            Editar
+                        </span>
+                          <span
+                            id={w._id}
+                            className="option"
+                            onClick={this.deleteWord}
+                          >
+                            Deletar
+                        </span>
+                        </div>
+                      </div>
+                      {w.meaning}
+                    </div>
+                  ))
+                ) : (
+                    <div className="no-results">Nenhuma palavra encontrada</div>
+                  )}
+              </div>
+            </Fragment>
+          )}
       </div>
     );
   }
