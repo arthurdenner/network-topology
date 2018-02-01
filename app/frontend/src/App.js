@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { LoopingRhombusesSpinner } from 'react-epic-spinners';
 import axios from 'axios';
 import './App.css';
 
@@ -42,11 +43,11 @@ class App extends Component {
 
     if (!meaning || !description) {
       this.setState({
-        error: 'Description and meaning are required!',
+        error: true,
       });
     } else {
       this.setState({
-        error: null,
+        error: false,
       });
 
       this.saveWord({ _id, meaning, description });
@@ -130,7 +131,9 @@ class App extends Component {
     return (
       <div className="container">
         {isFetching ? (
-          <div>Loading...</div>
+          <div className="spinner">
+            <LoopingRhombusesSpinner color="#2f80ed" />
+          </div>
         ) : (
           <Fragment>
             <div className="form">
@@ -166,7 +169,8 @@ class App extends Component {
             </div>
             {error && (
               <div className="error">
-                {error} <span onClick={this.handleCloseError}>✖</span>
+                Description and meaning are required!{' '}
+                <span onClick={this.handleCloseError}>✖</span>
               </div>
             )}
             <div>
@@ -196,7 +200,7 @@ class App extends Component {
                   </div>
                 ))
               ) : (
-                <div>Nenhuma palavra encontrada</div>
+                <div className="no-results">Nenhuma palavra encontrada</div>
               )}
             </div>
           </Fragment>
